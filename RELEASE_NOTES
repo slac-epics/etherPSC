@@ -1,0 +1,27 @@
+#==============================================================
+#
+#  Name: RELEASE_NOTES
+#
+#  Rem:  This file contains the the release notes for
+#        the etherPSC package.
+#
+#        The initial version of this software written
+#        by Clemens Wermelskirchen from SSRL.
+#
+#  Auth: 22-May-2007, K. Luchini         (LUCHINI)
+#  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
+#--------------------------------------------------------------
+#  Mod:
+#        08-Oct-2007, K. Luchini         (LUCHINI):
+#          release etherPSC-R1-0-3
+#          release etherPSC-R1-0-2  
+#        30-Aug-2007, K. Luchini         (LUCHINI):
+#          release etherPSC-R1-0-1  
+#
+#==============================================================
+#
+etherPSC-R2-0-0: Initial Import
+   
+
+ 
+

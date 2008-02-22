@@ -1,0 +1,735 @@
+record(bo, "$(ps):StateSetpt")
+{
+	field(DESC, "Power Supply On/Off")
+	field(DTYP, "$(dtyp)")
+	field(OUT,  "#L$(link) N$(node) P0 S1 @$(ip)")
+	field(ZNAM, "OFF")
+	field(ONAM, "ON")
+}
+
+record(bo, "$(ps):Reset")
+{
+	field(DESC, "Interlock Reset")
+	field(DTYP, "$(dtyp)")
+	field(OUT,  "#L$(link) N$(node) P0 S2 @$(ip)")
+	field(ZNAM, "RESET")
+	field(ONAM, "NORESET")
+}
+
+record(bo, "$(ps):Standardize")
+{
+	field(DESC, "Standardize")
+	field(ZNAM, "OFF")
+	field(ONAM, "ON")
+	field(FLNK, "PS:$(grp)StandardizeNum")
+}
+
+record(bo, "$(ps):Ramp")
+{
+	field(DESC, "Ramp and Turn Off")
+	field(DOL,"1")
+	field(ZNAM, "RAMPOFF")
+	field(ONAM, "NORAMPOFF")
+}
+
+record(mbbo, "$(ps):ControlStatus")
+{
+	field(DESC, "Control Status")
+	field(ZRST, "NotDone")
+	field(ZRSV, "MAJOR")
+	field(ONST, "Ramping")
+        field(ONVL, "1")
+	field(TWST, "Waiting")
+        field(TWVL, "2")
+	field(THST, "Abort")
+        field(THVL, "3")
+	field(THSV, "MAJOR")
+	field(FRST, "PSAbort")
+        field(FRVL, "4")
+	field(FRSV, "MAJOR")
+	field(FVST, "RampTimeout")
+        field(FVVL, "5")
+	field(FVSV, "MAJOR")
+	field(SXST, "Error")
+        field(SXVL, "6")
+	field(SXSV, "MAJOR")
+	field(SVST, "Timeout")
+        field(SVVL, "7")
+	field(SVSV, "MAJOR")
+	field(EIST, "NoControl")
+        field(EIVL, "8")
+	field(EISV, "MAJOR")
+	field(NIST, "NoDes")
+        field(NIVL, "9")
+	field(NISV, "MAJOR")
+	field(TEST, "Done")
+        field(TEVL, "10")
+}
+
+record(ao, "$(ps):CurrSetpt")
+{
+	field(DESC, "Current Setpoint")
+	field(DTYP, "$(dtyp)")
+	field(OUT,  "#L$(link) N$(node) P0 S3 @$(ip)")
+	field(DRVH, "$(drvh)")
+	field(DRVL, "$(drvl)")
+	field(EGU,  "A")
+	field(HOPR, "$(drvh)")
+	field(LOPR, "$(drvl)")
+	field(PREC, "3")
+        field(PINI, "YES")
+}
+
+record(ao, "$(ps):CurrSetptDes")
+{
+	field(DESC, "Desired Current Setpoint")
+	field(DRVH, "$(drvh)")
+	field(DRVL, "$(drvl)")
+	field(EGU,  "A")
+	field(HOPR, "$(drvh)")
+	field(LOPR, "$(drvl)")
+	field(PREC, "3")
+        field(PINI, "YES")
+	field(MDEL, "-1")
+}
+record(seq, "$(ps):CurrSeq")
+{
+	field(DESC, "Set current to DES or zero")
+	field(ASG, "Internal")
+	field(SELM, "Specified")
+	field(DOL1, "$(ps):CurrSetptDes  NMS NPP")
+	field(LNK1, "$(ps):CurrSetpt  NMS PP")
+	field(LNK2, "$(ps):CurrSetpt  NMS PP")
+	field(PREC, "3")
+}
+
+record(sub, "$(ps):Limits")
+{
+	field(DESC, "Alarm Limits Calculation")
+	field(ASG, "Internal")
+        field(INAM,"subPSInit")
+        field(SNAM,"subPSLimits")
+	field(INPA, "$(ps):CurrSetpt")
+	field(INPB, "$(ps):CurrSetpt.DRVH")
+	field(INPC, "-1")
+	field(INPD, "0.0002")
+	field(INPE, "0.0001")
+	field(INPF, "1")
+	field(INPG, "$(ps):State")
+	field(INPH, "0.002")
+	field(EGU,  "A")
+	field(PREC, "4")
+	field(FLNK, "$(ps):LimitsSeq")
+}
+
+record(seq, "$(ps):LimitsSeq")
+{
+	field(DESC, "Set Alarm Limits")
+	field(ASG, "Internal")
+	field(DOL1, "$(ps):Limits.I")
+	field(DOL2, "$(ps):Limits.J")
+	field(DOL3, "$(ps):Limits.K")
+	field(DOL4, "$(ps):Limits.L")
+	field(LNK1, "$(ps):Curr.HIHI")
+	field(LNK2, "$(ps):Curr.HIGH")
+	field(LNK3, "$(ps):Curr.LOW")
+	field(LNK4, "$(ps):Curr.LOLO")
+	field(PREC, "2")
+	field(FLNK, "$(ps):Curr")
+}
+
+record(ao, "$(ps):CurrDIDtMax")
+{
+	field(DESC, "Current Setpoint dIdt limit")
+	field(DTYP, "$(dtyp)")
+	field(OUT,  "#L$(link) N$(node) P0 S4 @$(ip)")
+	field(DRVH, "100.0")
+	field(DRVL, "1.0")
+	field(EGU,  "A/s")
+	field(HOPR, "100.0")
+	field(LOPR, "1.0")
+	field(VAL,  "10.0")
+	field(PINI, "YES")
+	field(PREC, "1")
+}
+
+record(ao, "$(ps):StandardizeNumCycle")
+{
+	field(DESC, "Standardization Num Cycles")
+	field(MDEL, "-1")
+}
+
+record(ao, "$(ps):StandardizeNumCycleMax")
+{
+	field(DESC, "Standardization Max Cycles")
+	field(DRVH, "100")
+	field(DRVL, "1")
+	field(MDEL, "-1")
+	field(VAL,  "3")
+        field(PINI, "YES")
+}
+
+record(ao, "$(ps):ControlDelay")
+{
+	field(DESC, "Control Delay")
+	field(EGU,  "Sec")
+	field(MDEL, "-1")
+}
+
+record(ao, "$(ps):ControlDelayMax")
+{
+	field(DESC, "Control Max Delay")
+	field(EGU,  "Sec")
+	field(DRVH, "400")
+	field(DRVL, "1")
+	field(MDEL, "-1")
+	field(VAL,  "$(delay)")
+        field(PINI, "YES")
+}
+
+record(bi, "$(ps):RampStatus")
+{
+	field(DESC, "Ramping Status")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S9 @$(ip)")
+	field(ZNAM, "OFF")
+	field(ONAM, "BUSY")
+	field(ZSV,  "NO_ALARM")
+	field(OSV,  "MINOR")
+}
+
+record(bi, "$(ps):State")
+{
+	field(DESC, "Power Supply On/Off Status")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S10 @$(ip)")
+	field(ZNAM, "OFF")
+	field(ONAM, "ON")
+	field(ZSV,  "MAJOR")
+	field(OSV,  "NO_ALARM")
+	field(FLNK, "$(ps):Limits")
+}
+
+record(bi, "$(ps):Ready")
+{
+	field(DESC, "Power Supply Ready Status")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S11 @$(ip)")
+	field(ZNAM, "NOTREADY")
+	field(ONAM, "READY")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):Magnet0Status")
+{
+	field(DESC, "Magnet Interlock 0 Status")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S12 @$(ip)")
+	field(ZNAM, "FAULT")
+	field(ONAM, "OK")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):Magnet1Status")
+{
+	field(DESC, "Magnet Interlock 1 Status")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S13 @$(ip)")
+	field(ZNAM, "FAULT")
+	field(ONAM, "OK")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):Magnet2Status")
+{
+	field(DESC, "Magnet Interlock 2 Status")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S14 @$(ip)")
+	field(ZNAM, "FAULT")
+	field(ONAM, "OK")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):Magnet3Status")
+{
+	field(DESC, "Magnet Interlock 3 Status")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S15 @$(ip)")
+	field(ZNAM, "FAULT")
+	field(ONAM, "OK")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):Xduct1Status")
+{
+	field(DESC, "Xduct 1 Interlock Status")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S16 @$(ip)")
+	field(ZNAM, "FAULT")
+	field(ONAM, "OK")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):GndCurrStatus")
+{
+	field(DESC, "Ground Current Fault")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S17 @$(ip)")
+	field(ZNAM, "FAULT")
+	field(ONAM, "OK")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):Status")
+{
+	field(DESC, "Fault Latch Status")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S18 @$(ip)")
+	field(ZNAM, "FAULT")
+	field(ONAM, "OK")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):StateSetptRdbk")
+{
+	field(DESC, "PS on Readback")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S19 @$(ip)")
+	field(ZNAM, "OFF")
+	field(ONAM, "ON")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):PS0Status")
+{
+	field(DESC, "PS Status 0")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S20 @$(ip)")
+	field(ZNAM, "FAULT")
+	field(ONAM, "OK")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):PS1Status")
+{
+	field(DESC, "PS Status 1")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S21 @$(ip)")
+ 	field(ZNAM, "FAULT")
+	field(ONAM, "OK")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):PS2Status")
+{
+	field(DESC, "PS Status 2")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S22 @$(ip)")
+	field(ZNAM, "FAULT")
+	field(ONAM, "OK")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):PS3Status")
+{
+	field(DESC, "PS Status 3")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S23 @$(ip)")
+	field(ZNAM, "FAULT")
+	field(ONAM, "OK")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):Xduct2Ready")
+{
+	field(DESC, "Xduct 2 Ready Status")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S24 @$(ip)")
+	field(ZNAM, "NOTREADY")
+	field(ONAM, "READY")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):Mode")
+{
+	field(DESC, "Local Mode")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S25 @$(ip)")
+	field(ZNAM, "LOCAL")
+	field(ONAM, "REMOTE")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):CalibStatus")
+{
+	field(DESC, "Calibration Status")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S26 @$(ip)")
+	field(ZNAM, "FAULT")
+	field(ONAM, "OK")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(ps):HWStatus")
+{
+	field(DESC, "Hardware Status")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S27 @$(ip)")
+	field(ZNAM, "FAULT")
+	field(ONAM, "OK")
+        field(ZSV,  "MAJOR")
+        field(OSV,  "NO_ALARM")
+}
+
+record(longin, "$(ps):BitbusAddr")
+{
+	field(DESC, "Bitbus Address")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S28 @$(ip)")
+}
+
+record(longin, "$(ps):Chassis")
+{
+	field(DESC, "Chassis Type")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S29 @$(ip)")
+}
+
+record(stringin, "$(ps):SerialNumber")
+{
+	field(DESC, "Serial Number")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S30 @$(ip)")
+}
+
+record(stringin, "$(ps):FWVersion")
+{
+	field(DESC, "Firmware Version")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S31 @$(ip)")
+}
+
+record(stringin, "$(ps):MagnetID")
+{
+	field(DESC, "Magnet ID")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S32 @$(ip)")
+}
+
+record(ai, "$(ps):Curr")
+{
+	field(DESC, "Current")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S33 @$(ip)")
+	field(EGU,  "A")
+	field(PREC, "2")
+	field(HOPR, "$(drvh)")
+	field(HIHI, "$(drvh)")
+	field(HIGH, "$(drvh)")
+	field(LOPR, "$(drvl)")
+	field(LOLO, "$(drvl)")
+	field(LOW,  "$(drvl)")
+	field(HHSV, "MAJOR")
+	field(HSV,  "MINOR")
+	field(LSV,  "MINOR")
+	field(LLSV, "MAJOR")
+	field(HYST, "0.001")
+	field(FLNK, "$(CurrFLNK)")
+}
+
+record(ai, "$(ps):CurrSetptRdbk")
+{
+	field(DESC, "Current Setpoint Readback")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S34 @$(ip)")
+	field(EGU,  "A")
+	field(PREC, "3")
+	field(HOPR, "$(drvh)")
+	field(LOPR, "$(drvl)")
+}
+
+record(ai, "$(ps):Xduct1Curr")
+{
+	field(DESC, "Xductor 1 Current")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S35 @$(ip)")
+        field(EGU,  "A")
+        field(PREC, "3")
+}
+
+record(ai, "$(ps):Xduct2Curr")
+{
+	field(DESC, "Xductor 2 Current")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S36 @$(ip)")
+        field(EGU,  "A")
+        field(PREC, "3")
+}
+
+record(ai, "$(ps):CurrDAC")
+{
+	field(DESC, "DAC Current")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S37 @$(ip)")
+        field(EGU,  "A")
+        field(PREC, "3")
+}
+
+record(ai, "$(ps):RippleCurr")
+{
+	field(DESC, "Ripple Current")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S38 @$(ip)")
+        field(EGU,  "A")
+        field(PREC, "3")
+}
+
+record(ai, "$(ps):GndCurr")
+{
+	field(DESC, "Ground Current")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S39 @$(ip)")
+        field(EGU,  "A")
+        field(PREC, "3")
+}
+
+record(ai, "$(ps):Volt")
+{
+	field(DESC, "PS Output Voltage")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S40 @$(ip)")
+        field(EGU,  "V")
+        field(PREC, "2")
+}
+
+record(ai, "$(ps):CntlTemp")
+{
+	field(DESC, "Controller Temperature")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S41 @$(ip)")
+	field(EGU, "F")
+	field(PREC, "1")
+	field(HOPR, "120")
+	field(LOPR, "40")
+	field(HIHI, "110")
+	field(HHSV, "MAJOR")
+	field(HIGH, "100")
+	field(HSV,  "MINOR")
+	field(LOW,  "80")
+	field(LSV,  "MINOR")
+	field(LOLO, "70")
+	field(LLSV, "MAJOR")
+	field(HYST, "0.1")
+	field(MDEL, "0.1")
+}
+
+record(ai, "$(ps):SpareVolt")
+{
+	field(DESC, "Spare Channel Voltage")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S42 @$(ip)")
+        field(EGU,  "V")
+        field(PREC, "2")
+}
+
+record(ai, "$(ps):Xduct1V2I")
+{
+	field(DESC, "Xductor 1 V/I Const.")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S43 @$(ip)")
+        field(PREC, "3")
+}
+
+record(ai, "$(ps):Xduct2V2I")
+{
+	field(DESC, "Xductor 2 V/I Const.")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S44 @$(ip)")
+        field(PREC, "3")
+}
+
+record(ai, "$(ps):GndCurrV2I")
+{
+	field(DESC, "Ground Current V/I Const.")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S45 @$(ip)")
+        field(PREC, "3")
+}
+
+record(ai, "$(ps):VoltV2V")
+{
+	field(DESC, "PS V/V Const.")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S46 @$(ip)")
+        field(PREC, "3")
+}
+
+record(ai, "$(ps):VoltRef")
+{
+	field(DESC, "Reference Voltage")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S47 @$(ip)")
+        field(PREC, "3")
+        field(EGU,  "V")
+}
+
+record(stringin, "$(ps):CalibDate")
+{
+	field(DESC, "Calibration Date")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S48 @$(ip)")
+}
+
+record(longin, "$(ps):OffsetADCRaw")
+{
+	field(DESC, "ADC Offset Raw Data")
+	field(ASG, "Internal")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S49 @$(ip)")
+	field(FLNK, "$(ps):OffsetADC.PROC")
+}
+
+record(calc, "$(ps):OffsetADC")
+{
+	field(DESC, "ADC Offset")
+	field(CALC, "(A + 0.5) / 327.")
+	field(INPA, "$(ps):OffsetADCRaw.VAL PP NMS")
+	field(EGU,  "%")
+	field(PREC, "3")
+}
+
+record(longin, "$(ps):GainADCRaw")
+{
+	field(DESC, "ADC Gain Raw Data")
+	field(ASG, "Internal")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S50 @$(ip)")
+	field(FLNK, "$(ps):GainADC.PROC")
+}
+
+record(calc, "$(ps):GainADC")
+{
+	field(DESC, "ADC Gain")
+	field(CALC, "(A + 0.5) / 327.675")
+	field(INPA, "$(ps):GainADCRaw.VAL PP MS")
+	field(EGU,  "%")
+	field(PREC, "3")
+}
+
+record(longin, "$(ps):OffsetDACRaw")
+{
+	field(DESC, "DAC Offset Raw Data")
+	field(ASG, "Internal")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S51 @$(ip)")
+	field(FLNK, "$(ps):OffsetDAC.PROC")
+}
+
+record(calc, "$(ps):OffsetDAC")
+{
+	field(DESC, "DAC Offset")
+	field(CALC, "(A + 0.5) / 327.675")
+	field(INPA, "$(ps):OffsetDACRaw.VAL PP NMS")
+	field(EGU,  "%")
+	field(PREC, "3")
+}
+
+record(longin, "$(ps):GainDACRaw")
+{
+	field(DESC, "DAC Gain Raw Data")
+	field(ASG, "Internal")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S52 @$(ip)")
+	field(FLNK, "$(ps):GainDAC.PROC")
+}
+
+record(calc, "$(ps):GainDAC")
+{
+	field(DESC, "DAC Gain")
+	field(CALC, "(A + 0.5) / 327.675")
+	field(INPA, "$(ps):GainDACRaw.VAL PP NMS")
+	field(EGU,  "%")
+	field(PREC, "3")
+}
+
+record(longin, "$(ps):LastResetCode")
+{
+	field(DESC, "Last Reset Code")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S53 @$(ip)")
+}
+
+record(longin, "$(ps):SelfTestCode")
+{
+	field(DESC, "Self Test Code")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S54 @$(ip)")
+}
+
+record(longin, "$(ps):LastOffCode")
+{
+	field(DESC, "Last Turn Off Code")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S55 @$(ip)")
+}
+
+record(longin, "$(ps):CalibCode")
+{
+	field(DESC, "Calibration Error Code")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S56 @$(ip)")
+}
+
+record(stringin, "$(ps):InfoMsg")
+{
+	field(DESC, "Informational Message")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S57 @$(ip)")
+}
+
+record(longin, "$(ps):BitbusLine")
+{
+        field(DESC, "Bitbus Line")
+        field(DTYP, "$(dtyp)")
+        field(INP,  "#L$(link) N$(node) P0 S58 @$(ip)")
+}
+
+record(longin, "$(ps):BitbusCountCmd")
+{
+	field(DESC, "Bitbus Command Count")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S59 @$(ip)")
+	field(SCAN, "1 second")
+}
+
+record(longin, "$(ps):BitbusCountRsp")
+{
+	field(DESC, "Bitbus Response Count")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S60 @$(ip)")
+	field(SCAN, "1 second")
+}
+
+record(stringin, "$(ps):CntlAddr")
+{
+	field(DESC, "Controller Address")
+	field(DTYP, "$(dtyp)")
+	field(INP,  "#L$(link) N$(node) P0 S61 @$(ip)")
+	field(SCAN, "1 second")
+}

@@ -1,0 +1,7 @@
+record(calc, "PS:DevStandardizeNum")
+{
+        field(ASG,  "Internal")
+	field(CALC, "A+B+C+D+E+F+G+H+I+J+K+L")
+        field(INPA, "118-PSD3:Standardize NPP NMS")
+        field(INPB, "118-PSD4:Standardize NPP NMS")
+}
