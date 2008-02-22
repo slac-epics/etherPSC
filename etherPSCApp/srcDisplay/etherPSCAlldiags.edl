@@ -1,0 +1,183 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 292
+y 310
+w 200
+h 200
+font "new century schoolbook-medium-r-18.0"
+ctlFont "helvetica-medium-r-14.0"
+btnFont "helvetica-medium-r-14.0"
+fgColor index 14
+bgColor index 3
+textColor index 14
+ctlFgColor1 index 14
+ctlFgColor2 index 1
+ctlBgColor1 index 25
+ctlBgColor2 index 25
+topShadowColor index 1
+botShadowColor index 14
+title "Dev PS Diags"
+snapToGrid
+gridSize 5
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 5
+y 10
+w 119
+h 21
+font "helvetica-bold-r-18.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Dev PS Diags"
+}
+autoSize
+endObjectProperties
+
+# (Exit Button)
+object activeExitButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 125
+y 5
+w 71
+h 24
+fgColor index 1
+bgColor index 25
+topShadowColor index 1
+botShadowColor index 14
+label "EXIT"
+font "helvetica-bold-r-14.0"
+3d
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 90
+y 70
+w 100
+h 25
+fgColor index 1
+bgColor index 49
+topShadowColor index 1
+botShadowColor index 14
+font "helvetica-bold-r-14.0"
+buttonLabel "118 Dev PS3"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "etherPSCdiags"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "ps=118-PSD3"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 90
+y 100
+w 100
+h 25
+fgColor index 1
+bgColor index 49
+topShadowColor index 1
+botShadowColor index 14
+font "helvetica-bold-r-14.0"
+buttonLabel "118 Dev PS4"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "etherPSCdiags"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "ps=118-PSD4"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 25
+y 75
+w 59
+h 16
+font "helvetica-bold-r-14.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Ethernet"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 25
+y 105
+w 59
+h 16
+font "helvetica-bold-r-14.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Ethernet"
+}
+autoSize
+endObjectProperties
+
+# (Exit Button)
+object activeExitButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 115
+y 35
+w 80
+h 20
+fgColor index 1
+bgColor index 25
+topShadowColor index 1
+botShadowColor index 14
+label "EXIT EDM"
+font "helvetica-bold-r-14.0"
+3d
+exitProgram
+endObjectProperties
+

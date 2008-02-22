@@ -1,0 +1,19 @@
+#==============================================================================
+#
+# Abs:  Database template for the Ethernet power supplies.
+#
+# Name:  etherPSC.template
+#
+#==============================================================================
+#
+file db/etherPSC.db
+{
+  pattern {   ps     , grp ,   dtyp   ,link, node,      ip       , drvl,  drvh, CurrFLNK      , delay }
+          { 118-PSD3 , Dev , EtherPSC , 0  ,  0  ,"134.79.35.25" , 0.0 ,  98.0, 0             ,   3   }
+          { 118-PSD4 , Dev , EtherPSC , 0  ,  0  ,"134.79.35.190", 0.0 ,  98.0, 0             ,   3   }
+}
+file db/etherPSCAll.db
+{
+  pattern { grp }
+	  { Dev }
+}
