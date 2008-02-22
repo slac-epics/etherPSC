@@ -4,13 +4,15 @@ TOP=..
 
 include $(TOP)/configure/CONFIG
 
-# CHECK_RELEASE controls the consistency checking of the support
-# applications defined in the $(TOP)/configure/RELEASE* files.
-# Normally CHECK_RELEASE should be set to YES.
-# Set CHECK_RELEASE to NO to disable checking completely.
-# Set CHECK_RELEASE to WARN to perform consistency checking,
-# but continue the build even if conflicts are found.
-CHECK_RELEASE = YES
+# Set the following to NO to disable consistency checking of
+# the support applications defined in $(TOP)/configure/RELEASE
+# CHECK_RELEASE = YES
+# T. Straumann / H. Rarback, 2002/4/1,
+# checkRelease.pl sucks, i.e. doesn't reduce paths to
+# canonical representation.
+#CHECK_RELEASE = NO
+#TS, 10/4/2002; reenabled CHECK_RELEASE - using absolute paths to define EPICS_BASE
+CHECK_RELEASE=YES
 
 TARGETS = $(CONFIG_TARGETS)
 CONFIGS += $(subst ../,,$(wildcard $(CONFIG_INSTALLS)))
