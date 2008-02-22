@@ -20,7 +20,11 @@
 #
 #==============================================================
 #
+etherPSC-R2-0-1: modifications needed to bring the module to EPICS R3-14-9 standard
+                 Build against base-R3-14-9-lcls1 (RTEMS 4.7.1)
+
 etherPSC-R2-0-0: Initial Import
+
    
 
  
