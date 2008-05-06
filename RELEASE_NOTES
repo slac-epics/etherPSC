@@ -12,14 +12,17 @@
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
 #  Mod:
+#        06-May-2008, K. Luchini         (LUCHINI):
+#          release etherPSC-R2-0-2  
 #        08-Oct-2007, K. Luchini         (LUCHINI):
-#          release etherPSC-R1-0-3
-#          release etherPSC-R1-0-2  
+#          release etherPSC-R2-0-1  
 #        30-Aug-2007, K. Luchini         (LUCHINI):
-#          release etherPSC-R1-0-1  
+#          release etherPSC-R2-0-0  
 #
 #==============================================================
 #
+etherPSC-R2-0-2: Build against base-R3-14-8-2-lcls2 (RTEMS 4.7.1)
+
 etherPSC-R2-0-1: modifications needed to bring the module to EPICS R3-14-9 standard
                  Build against base-R3-14-9-lcls1 (RTEMS 4.7.1)
 
