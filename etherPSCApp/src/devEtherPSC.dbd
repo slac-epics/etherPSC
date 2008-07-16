@@ -6,4 +6,4 @@ device(longin,BITBUS_IO,devLiEtherPSC,"EtherPSC")
 device(stringin,BITBUS_IO,devSiEtherPSC,"EtherPSC")
 driver(drvEtherPSC)
 registrar(drvEtherPSCRegistrar)
-registrar(subPSRegister)
+
