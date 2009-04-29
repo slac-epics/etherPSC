@@ -1,14 +1,15 @@
 #RELEASE Location of external products
 # Run "gnumake clean uninstall install" in the application
 # top directory each time this file is changed.
+include $(TOP)/RELEASE_SITE
+TEMPLATE_TOP=$(EPICS_BASE)/templates/makeBaseApp/top
 
 # =============================================================
 # Define the top of the EPICS tree for your site.
 # We will build some tools/scripts that allow us to
 # change this easily when relocating software.
 # ==============================================================
-include $(TOP)/RELEASE_SITE
-TEMPLATE_TOP=$(EPICS_BASE)/templates/makeBaseApp/top
+#EPICS_SITE_TOP=/afs/slac/g/lcls/epics
 
 # ==================================================================================
 #If using macro substitutions, point MSI at the binary:
@@ -25,13 +26,13 @@ EPICS_MODULES=$(EPICS_SITE_TOP)/modules
 # ==============================================================
 # Define the version of EPICS BASE that you will use
 # =============================================================
-BASE_MODULE_VERSION=base-R3-14-8-2-lcls2
+BASE_MODULE_VERSION=base-R3-14-8-2-lcls3
 
 # =============================================================
 # Define the version of modules needed by
 # IOC apps or other Support apps
 # =============================================================
-SEQ_MODULE_VERSION=seq-R2-0-0
+SEQ_MODULE_VERSION=seq-R2-0-11-lcls1
 
 # ============================================================
 # External Support
@@ -42,9 +43,8 @@ SNCSEQ=$(EPICS_MODULES)/seq/$(SEQ_MODULE_VERSION)
 # Define EPICS_BASE
 # EPICS_BASE usually appears last so other apps can override stuff:
 # =================================================================
-# EPICS_BASE usually appears last so other apps can override stuff:
-
 EPICS_BASE=$(EPICS_SITE_TOP)/base/$(BASE_MODULE_VERSION)
-# =================================================================
+
+# End of file
 
 
