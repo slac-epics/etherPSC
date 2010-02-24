@@ -341,10 +341,17 @@ static void d2b ( unsigned char *b, double *d )
 
     p = (unsigned char*) &f;
     f = *d;
+#ifdef __PPC__    
     b[0] = p[3];
     b[1] = p[2];
     b[2] = p[1];
     b[3] = p[0];
+#else
+    b[0] = p[0];
+    b[1] = p[1];
+    b[2] = p[2];
+    b[3] = p[3];
+#endif
 
     return;
 }
@@ -355,7 +362,7 @@ static void d2b ( unsigned char *b, double *d )
  */
 static void s2b ( unsigned char *b, unsigned short s )
 {
-    b[0] = s * 0xff;
+    b[0] = s & 0xff;
     b[1] = s >> 8;
 
     return;
@@ -371,10 +378,17 @@ static float b2f ( unsigned char *b )
     unsigned char       *p;
 
     p = (unsigned char*) &f;
+#ifdef __PPC__    
     p[0] = b[3];
     p[1] = b[2];
     p[2] = b[1];
     p[3] = b[0];
+#else
+    p[0] = b[0];
+    p[1] = b[1];
+    p[2] = b[2];
+    p[3] = b[3];
+#endif
 
     return ( f );
 }
@@ -413,7 +427,7 @@ static EPICSTHREADFUNC etherPSC_output_thread( ETHERPSC *etherpsc )
                 node = (ETHERPSCNODE*) node->pnode )
     {
 	p = inet_ntoa( node->sockAddr.sin_addr );
-        process_record_si( node, SIGNAL_CNTL_ADDRESS, p, strlen(p) );
+        process_record_si( node, SIGNAL_CNTL_ADDRESS, (unsigned char *)p, strlen(p) );
         process_record_li( node, SIGNAL_BITBUS_LINE, 0 );
         process_record_li( node, SIGNAL_BITBUS_ADDRESS, 0 );
 
@@ -544,7 +558,7 @@ static EPICSTHREADFUNC etherPSC_input_thread( ETHERPSC *etherpsc )
     int			n;
     unsigned char	rsp[512];
     struct sockaddr_in	sockAddr;
-    unsigned int	sockAddrSize;
+    socklen_t	        sockAddrSize;
     ETHERPSCNODE	*node;
 
     printf( "drvEtherPSC: receiver thread launched\n" );

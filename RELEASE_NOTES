@@ -12,6 +12,9 @@
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
 #  Mod:
+#        24-Feb-2010, K. Luchini         (LUCHINI):
+#          release etherPSC-R2-0-1-lcls2 
+#          release etherPSC-R2-0-1-lcls1 
 #        29-Apr-2009, K. Luchini         (LUCHINI):
 #          release etherPSC-R2-0-0-lcls1 
 #        06-May-2008, K. Luchini         (LUCHINI):
@@ -23,6 +26,11 @@
 #
 #==============================================================
 #
+etherPSC-R2-0-1-lcls2: Build against base-R3-14-8-2-lcls5 (RTEMS 4.9.3)
+
+etherPSC-R2-0-1-lcls1: Pick-up linux-x86 endian fix from Spear3 by 
+                       Stephanie Allison 
+
 etherPSC-R2-0-0-lcls1: Build against base-R3-14-8-2-lcls3 (RTEMS 4.9.1)
                        use lcls convension for tagging pkgs maintained outside 
 
