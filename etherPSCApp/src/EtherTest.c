@@ -8,7 +8,7 @@ int EtherTest() {
 
     struct sockaddr_in	psAddr, clientAddr;
     int		sock;
-    unsigned	sockAddrSize;
+    socklen_t	sockAddrSize;
     char	request[32];
     char	response[256];
     int		len, i;
