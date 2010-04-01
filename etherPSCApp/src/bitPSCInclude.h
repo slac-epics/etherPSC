@@ -55,8 +55,10 @@
 #define SIGNAL_BITBUS_CMD_CNT	59
 #define	SIGNAL_BITBUS_RSP_CNT	60
 #define SIGNAL_CNTL_ADDRESS	61
+#define SIGNAL_DIAG_MSG         62
+#define SIGNAL_REV_POLARITY_STATUS 63
 
-#define SIGNAL_MAXNUM           61
+#define SIGNAL_MAXNUM           63
 
 #define	BITBUS_MAX_CARDS	21
 #define	BITBUS_MAX_ADDRESS	254
@@ -76,6 +78,7 @@
 #define BITBUSCMD_CAL_DATA      0xcc
 #define BITBUSCMD_FAST_STATUS   0xcd
 #define BITBUSCMD_CNTL_RESET    0xe3
+#define BITBUSCMD_DIAG_MSG      0xcf
 
 #define BITBUSRSP_PS_STATUS     0xbf
 
@@ -104,10 +107,10 @@ typedef struct
 		    double	next;
 		    double	last;
 		} ao;
-		int	bi;
-		int	bo;
-		long	li;
-		char	si[40];
+		int	         bi;
+		int              bo;
+		long 	         li;
+		char	         si[40];
 	    } val;
         } PSCRECORD;
 
