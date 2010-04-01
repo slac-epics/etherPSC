@@ -33,6 +33,7 @@
 #include	"etherPSCInclude.h"
 
 #define	DEBUG		0
+#define	DEBUG_REV      	1
 
 #ifndef OK
 #define	OK	0
@@ -61,6 +62,10 @@ typedef struct
 static const ETHERPSCMSG  PS_ON_MSG = {
                 4, 2000, BITBUSCMD_PS_ON, 0x00,
                 { BITBUSCMD_PS_ON, 0 } };
+
+static const ETHERPSCMSG  PS_ON_REV_MSG = {
+                4, 2000, BITBUSCMD_PS_ON_REV, 0x00,
+                { BITBUSCMD_PS_ON_REV, 0 } };
 
 static const ETHERPSCMSG  PS_OFF_MSG = {
                 4, 2000, BITBUSCMD_PS_OFF, 0x00,
@@ -453,17 +458,33 @@ static EPICSTHREADFUNC etherPSC_output_thread( ETHERPSC *etherpsc )
             }
 
             if ( node->record[SIGNAL_PS_ON_OFF].set )
-            {                           /* turn PSC on or off */
+            {                           /* turn PSC on or off or on in reverse polarity */
 		node->record[SIGNAL_PS_ON_OFF].set = 2;
-                if ( node->record[SIGNAL_PS_ON_OFF].val.bo )
+                if ( node->record[SIGNAL_PS_ON_OFF].val.bo==1 )
                 {
+#if DEBUG_REV
+		    epicsPrintf("Turning On Normal\n");
+#endif
                     send_msg( node, &PS_ON_MSG );
                     node->busy = 20;     /* this will take a while */
                     if (!node->record[SIGNAL_ON_STATUS].val.bi)
                       process_record_ao( node, SIGNAL_CURRENT_AC, (float) 0.0 );
                 }
-                else
+                else if (node ->record[SIGNAL_PS_ON_OFF].val.bo==2 )
+		{
+#if DEBUG_REV
+		    epicsPrintf("Turning On Reverse\n");
+#endif
+                    send_msg( node, &PS_ON_REV_MSG );
+                    node->busy = 40;     /* this will take a while */
+                    if (!node->record[SIGNAL_ON_STATUS].val.bi)
+                      process_record_ao( node, SIGNAL_CURRENT_AC, (float) 0.0 );
+		}
+                else if (node ->record[SIGNAL_PS_ON_OFF].val.bo==0 )
                 {
+#if DEBUG_REV
+		    epicsPrintf("Turning Off\n");
+#endif
                     send_msg( node, &PS_OFF_MSG );
                     node->busy = 10;     /* give it some time */
                 }
@@ -660,6 +681,7 @@ static void process_record_bi( ETHERPSCNODE *node, int signal, int i )
 
     PSCRecord = &node->record[signal];
     if ( ! (pbi = (biRecord*) PSCRecord->precord) ) return;
+ 
 
     if ( pbi->rval != i  ||  pbi->udf  ||  PSCRecord->nsta )
     {
@@ -673,6 +695,7 @@ static void process_record_bi( ETHERPSCNODE *node, int signal, int i )
         dbScanUnlock( (struct dbCommon*) pbi );
     }
 }
+
 
 static void process_record_li( ETHERPSCNODE *node, int signal, long i )
 {
@@ -728,6 +751,9 @@ static void process_status1 ( ETHERPSCNODE *node, unsigned char *rsp )
 
     i = ( rsp[2] & 0x08 ) ? 1 : 0;
     process_record_bi( node, SIGNAL_RAMPING_STATUS, i );
+
+    i = ( rsp[2] & 0x04 ) ? 1 : 0;
+    process_record_bi( node, SIGNAL_REV_POLARITY_STATUS, i );
 
     i = ( rsp[2] & 0x80 ) ? 0 : 1;
     process_record_bi( node, SIGNAL_LOCAL_MODE, i );
@@ -948,6 +974,7 @@ static void process_etherpsc_rsp ( ETHERPSCNODE *node, unsigned char *rsp, long 
 
 	break;
 
+	case BITBUSCMD_PS_ON_REV :
 	case BITBUSCMD_PS_ON :
 	case BITBUSCMD_PS_OFF :
 
@@ -959,6 +986,7 @@ static void process_etherpsc_rsp ( ETHERPSCNODE *node, unsigned char *rsp, long 
                                 /* otherwise output thread will try again */
 
 	    process_status1( node, rsp );
+	    process_status3( node, rsp );
  
 	break;
  
@@ -971,11 +999,13 @@ static void process_etherpsc_rsp ( ETHERPSCNODE *node, unsigned char *rsp, long 
 	break;
 
         default :
+#ifdef DEBUG
                 printf("rsp:");
                 for ( i=0; i<n; i++ ) {
                     printf(" %02x", rsp[i] );
                 }
                 printf("\n");
+#endif
         break;
     }
 }
