@@ -12,8 +12,8 @@
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
 #  Mod:
-#        20-Mar-2010, S. Hoobler         (SONYA):
-#          release etherPSC-R2-0-1-lcls3 
+#        01-Apr-2010, K. Luchini         (LUCHINI):
+#          release etherPSC-R2-0-0-lcls2
 #        24-Feb-2010, K. Luchini         (LUCHINI):
 #          release etherPSC-R2-0-1-lcls2 
 #          release etherPSC-R2-0-1-lcls1 
@@ -28,7 +28,8 @@
 #
 #==============================================================
 #
-etherPSC-R2-0-1-lcls3: Build against base-R3-14-8-2-lcls6 (RTEMS 4.9.4)
+etherPSC-R2-0-0-lcls2: Build against base-R3-14-8-2-lcls5 (RTEMS 4.9.1)
+                       and add turn on reverse polarity
 
 etherPSC-R2-0-1-lcls2: Build against base-R3-14-8-2-lcls5 (RTEMS 4.9.3)
 
