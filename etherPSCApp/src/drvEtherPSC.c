@@ -33,7 +33,7 @@
 #include	"etherPSCInclude.h"
 
 #define	DEBUG		0
-#define	DEBUG_REV      	1
+#define DEBUG_REV       0
 
 #ifndef OK
 #define	OK	0
