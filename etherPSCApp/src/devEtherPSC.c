@@ -27,7 +27,6 @@
 #include "etherPSCInclude.h"
 
 #define	DEBUG		0
-#define	DEBUG_REV	1
 
 
 /*Create the dsets */
@@ -386,7 +385,7 @@ static long write_mbbo( struct mbboRecord *pmbbo )
     struct bitbusio     *pb = (struct bitbusio*)&(pmbbo->out.value);
 
 
-#if  DEBUG_REV
+#if  DEBUG
     epicsPrintf("write_mbbo@devEtherPSC, L=%d, N=%d, P=%d, S=%d\n",
 		pb->link, pb->node, pb->port, pb->signal );
 #endif
