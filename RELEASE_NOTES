@@ -12,6 +12,8 @@
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
 #  Mod:
+#        09-Jun-2010, K. Luchini         (LUCHINI):
+#          release etherPSC-R2-0-1-lcls4
 #        01-Apr-2010, K. Luchini         (LUCHINI):
 #          release etherPSC-R2-0-0-lcls2
 #        24-Feb-2010, K. Luchini         (LUCHINI):
@@ -28,6 +30,8 @@
 #
 #==============================================================
 #
+etherPSC-R2-0-1-lcls4: Build against base-R3-13-8-2-lcls6 (RTEMS 4.9.3)
+
 etherPSC-R2-0-0-lcls2: Build against base-R3-14-8-2-lcls5 (RTEMS 4.9.1)
                        and add turn on reverse polarity
 
