@@ -30,6 +30,9 @@
 #
 #==============================================================
 #
+etherPSC-R2-0-1-lcls5: 07-Sep-2011, K. Luchini (LUCHINI):
+                       Upgrade seq vrom seq-R2-0-11-lcls3 to seq-R2-0-11-lcls4
+
 etherPSC-R2-0-1-lcls4: Build against base-R3-13-8-2-lcls6 (RTEMS 4.9.3)
 
 etherPSC-R2-0-0-lcls2: Build against base-R3-14-8-2-lcls5 (RTEMS 4.9.1)
