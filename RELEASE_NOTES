@@ -30,6 +30,8 @@
 #
 #==============================================================
 #
+etherPSC-R2-0-1-lcls6: Upgrade to newer Sequencer: seq-R2-1-3-lcls1
+
 etherPSC-R2-0-1-lcls5: 07-Sep-2011, K. Luchini (LUCHINI):
                        Upgrade seq vrom seq-R2-0-11-lcls3 to seq-R2-0-11-lcls4
 
