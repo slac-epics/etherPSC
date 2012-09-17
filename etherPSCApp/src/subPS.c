@@ -28,8 +28,8 @@
 
   Name: subPS.c      
 	   subPSRegister   - Register All Subroutines
-	   subPSInit       - General Initialization
-           subPSLimits     - Calculate alarm limits
+           subPSAlarmDelta - Alarm   Limit Delta and Absolute Limits
+           subPSWarnDelta  - Warning Limit Delta
 
   Proto: not required and not used.  All functions called by the
          subroutine record get passed one argument:
@@ -52,69 +52,87 @@
 
 =============================================================================*/
 
-#include <subRecord.h>        /* for struct subRecord    */
-#include <registryFunction.h> /* for registryFunctionAdd */
-#include <epicsExport.h>      /* for epicsExportRegistrar*/
+#include <subRecord.h>        /* for struct subRecord      */
+#include <registryFunction.h> /* for epicsRegisterFunction */
+#include <epicsExport.h>      /* for epicsRegisterFunction */
 
-long subPSInit(struct subRecord *psub)
+long subPSAlarmDelta(struct subRecord *psub)
 {
   /*
-   * General purpose initialization required since all subroutine records
-   * require a non-NULL init routine even if no initialization is required.  
-   * Note that most subroutines in this file use this routine as an init
-   * routine.  If init logic is needed for a specific subroutine, create a 
-   * new routine for it - don't modify this one.
-   */
-  return 0;
-}
-
-long subPSLimits(struct subRecord *psub)
-{
-  /*
-   * Calculate alarm limits from desired current.  If desired current is 0 or
-   * the disable alarms flag is set, then use max/min values to disable alarms.
+   * Calculate alarm limits from desired deltas and reference.
    *
    * Inputs:
-   *          A = Desired Current
-   *          B = Maximum (DRVH) 
-   *          C = Minimum (DRVL)
-   *          D = Fraction for Alarm   Limits (HIHI, LOLO) (0 = disable)
-   *          E = Fraction for Warning Limits (HIGH, LOW)  (0 = disable)
-   *          F = Setpoint currently changing? (0=no, 1=yes)
-   *                                     (0=calc limits, 1=set limits to min/max)
-   *          G = State    (0=off, 1=on) (1=calc limits, 0=set limits to min/max)
-   *          H = Minimum allowed offset
+   *          A = Reference
+   *          B = Delta for Alarm   Limits (HIHI, LOLO)
+   *          C = Delta for Warning Limits (HIGH, LOW)
    * Outputs:
    *          I = HIHI value
    *          J = HIGH value
    *          K = LOW  value
    *          L = LOLO value
-   *        VAL = Not Used
+   *        VAL = Delta for Alarm Limits
    */
-  psub->i = psub->b+1;
-  psub->j = psub->b+1;
-  psub->k = psub->c-1;
-  psub->l = psub->c-1;
-  if ((psub->a > 0.01) && (psub->f < 0.01) && (psub->g > 0.01)) {
-    if (psub->d > 0.0) {
-      psub->l = psub->d * psub->a;
-      if (psub->l < psub->h) psub->l = psub->h;
-      psub->i = psub->a + psub->l;
-      psub->l = psub->a - psub->l;
-    }
-    if (psub->e > 0.0) {
-      psub->k = psub->e * psub->a;
-      if (psub->k < psub->h) psub->k = psub->h;
-      psub->j = psub->a + psub->k;
-      psub->k = psub->a - psub->k;
-    }
-  }  
+  psub->val = psub->b;
+  psub->i = psub->a + psub->b;
+  psub->l = psub->a - psub->b;
+  psub->j = psub->a + psub->c;
+  psub->k = psub->a - psub->c;
   return 0;
 }
 
-void subPSRegister(void)
+long subPSWarnDelta(struct subRecord *psub)
 {
-  registryFunctionAdd("subPSInit"     , (void(*)())subPSInit   );
-  registryFunctionAdd("subPSLimits"   , (void(*)())subPSLimits );
+  /*
+   * Calculate warning and alarm deltas from gold value or setpoint.
+   * If the alarms are disabled or the setpoint is currently changing,
+   * then set deltas to large values to disable alarms.
+   *
+   * Inputs:
+   *          A = Current Setpoint
+   *          B = Setpoint above which % is used and
+   *              below which delta is used (must be positive)
+   *          C = Gold    Setpoint
+   *          D = Warning Delta
+   *          E = Multiplier for Alarm Limits (must be > 1)
+   *          F = Setpoint currently changing? (0=no, 1=yes)
+   *              (0=calc limits, 1=disable limits)
+   *          G = State (0=off, 1=on)
+   *              (1=calc limits, 0=disable limits)
+   *          H = Limits State
+   *              (0=disable limits, 1=use gold, 2=use setpoint)
+   *          I = Warning Fraction
+   * Outputs:
+   *          K = Reference (gold or setpoint)
+   *          L = Delta for Alarm   Limits
+   *        VAL = Delta for Warning Limits
+   */
+  /* If setpoint is changing or the power supply is off,
+     set deltas to large numbers to disabling alarming. */
+  if ((psub->f > 0.5) || (psub->g < 0.5) || (psub->h < 0.5)) {
+    psub->val = 1000000.0;
+    psub->l   = 1000000.0;
+    psub->k   = 0.0;
+  } else {
+    /* Set reference value based on limits state. */
+    if (psub->h < 1.5) psub->k = psub->c;
+    else               psub->k = psub->a;
+    /* Calculate warning limits tolerance.  Use either fraction or
+       absolute value depending on current setpoint value. */
+    if (psub->b < 0) psub->b = -psub->b;
+    if (((psub->k >= 0.0) && (psub->k >  psub->b)) ||
+        ((psub->k <  0.0) && (psub->k < -psub->b))) {
+      psub->val = psub->k * psub->i;
+    } else {
+      psub->val = psub->d;
+    }
+    /* Calculate alarm limits tolerance using a multiplier. */
+    psub->l = psub->val * psub->e;
+    /* Tolerances must be positive. */
+    if (psub->val < 0.0) psub->val = -psub->val;
+    if (psub->l   < 0.0) psub->l   = -psub->l;
+  }
+  return 0;
 }
-epicsExportRegistrar(subPSRegister);
+
+epicsRegisterFunction(subPSAlarmDelta);
+epicsRegisterFunction(subPSWarnDelta);
