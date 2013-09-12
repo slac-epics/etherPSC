@@ -7,8 +7,9 @@ typedef struct
 	    struct sockaddr_in	sockAddr;	/* for transmission */
 	    unsigned int	sockAddrSize;
 	    unsigned short	present;
-	    unsigned short	busy;
+	    short	        busy;
 	    unsigned short	unanswered;
+	    short	        rampwait;
 	    PSCRECORD		record[SIGNAL_MAXNUM+1];
 	} ETHERPSCNODE;
 
