@@ -19,6 +19,7 @@
 #include "biRecord.h"
 #include "boRecord.h"
 #include "longinRecord.h"
+#include "mbboRecord.h"
 #include "stringinRecord.h"
 #include "link.h"
 #include "epicsExport.h"
@@ -133,6 +134,26 @@ struct {
 	read_li,
 };
 epicsExportAddress(dset, devLiEtherPSC);
+
+static long init_mbbo_record();
+static long write_mbbo();
+
+struct {
+	long		number;
+	DEVSUPFUN	report;
+	DEVSUPFUN	init;
+	DEVSUPFUN	init_record;
+	DEVSUPFUN	get_ioint_info;
+	DEVSUPFUN	write_mbbo;
+}devMbboEtherPSC={
+	5,
+	NULL,
+	NULL,
+	init_mbbo_record,
+	NULL,
+	write_mbbo,
+};
+epicsExportAddress(dset, devMbboEtherPSC);
 
 static long init_si_record();
 static long read_si();
@@ -348,3 +369,36 @@ static long read_si( struct stringinRecord *psi )
     return ( 0 );
 }
 
+ 
+
+static long init_mbbo_record( struct mbboRecord *pmbbo )
+{
+
+    struct bitbusio     *pb = (struct bitbusio*)&(pmbbo->out.value);
+
+    return ( etherPSCdrvInitRecord( pb, (struct dbCommon*) pmbbo ) ); 
+}
+
+static long write_mbbo( struct mbboRecord *pmbbo )
+{
+    PSCRECORD		*PSCRecord;
+    struct bitbusio     *pb = (struct bitbusio*)&(pmbbo->out.value);
+
+
+#if  DEBUG
+    epicsPrintf("write_mbbo@devEtherPSC, L=%d, N=%d, P=%d, S=%d\n",
+		pb->link, pb->node, pb->port, pb->signal );
+#endif
+
+    if ( ! (PSCRecord = pmbbo->dpvt) ) return (2);
+
+    switch ( pb->signal )
+    {
+	case	SIGNAL_PS_ON_OFF :
+		PSCRecord->val.bo = pmbbo->rval;
+		PSCRecord->set = 1;	
+	break;
+    }
+
+    return(0);
+}

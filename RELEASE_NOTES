@@ -31,6 +31,17 @@
 #==============================================================
 #
 #
+etherPSC-R2-0-2_1-2:  13-Jun-2016, K. Luchini
+                       add etherPSCBipolar.db and install
+                       etherPSC.template and commonPS.template
+
+etherPSC-R2-0-2_1-1:  13-Jun-2016, K. Luchini
+                       Chg ioc target from linux-x86 to linux-x86_64
+                       for build in 64-bit linux
+
+etherPSC-R2-0-2_1-0:  13-Jun-2016, K. Luchini
+                       Merge etherPSC-R2-0-1_1-1 and etherPSC-R2-0-2
+
 etherPSC-R2-0-2:     13-Jun-2016, K. Luchini
                       import lastest version from spear with 
                       test application included, and epics slider fix.

@@ -63,6 +63,10 @@ static const ETHERPSCMSG  PS_ON_MSG = {
                 4, 2000, BITBUSCMD_PS_ON, 0x00,
                 { BITBUSCMD_PS_ON, 0 } };
 
+static const ETHERPSCMSG  PS_ON_REV_MSG = {
+                4, 2000, BITBUSCMD_PS_ON_REV, 0x00,
+                { BITBUSCMD_PS_ON_REV, 0 } };
+
 static const ETHERPSCMSG  PS_OFF_MSG = {
                 4, 2000, BITBUSCMD_PS_OFF, 0x00,
                 { BITBUSCMD_PS_OFF, 0 } };
@@ -461,10 +465,17 @@ static EPICSTHREADFUNC etherPSC_output_thread( ETHERPSC *etherpsc )
             if ( node->record[SIGNAL_PS_ON_OFF].set )
             {                           /* turn PSC on or off */
 		node->record[SIGNAL_PS_ON_OFF].set = 2;
-                if ( node->record[SIGNAL_PS_ON_OFF].val.bo )
+                if ( node->record[SIGNAL_PS_ON_OFF].val.bo==1 )
                 {
                     send_msg( node, &PS_ON_MSG );
                     node->busy = 20;     /* this will take a while */
+                    if (!node->record[SIGNAL_ON_STATUS].val.bi)
+                      process_record_ao( node, SIGNAL_CURRENT_AC, (float) 0.0 );
+		}
+                else if ( node->record[SIGNAL_PS_ON_OFF].val.bo==2 )
+	        {
+                    send_msg( node, &PS_ON_REV_MSG );  /* turn on in reverse */
+                    node->busy = 40;     /* this will take a while */
                     if (!node->record[SIGNAL_ON_STATUS].val.bi)
                       process_record_ao( node, SIGNAL_CURRENT_AC, (float) 0.0 );
                 }
@@ -738,6 +749,9 @@ static void process_status1 ( ETHERPSCNODE *node, unsigned char *rsp )
     process_record_bi( node, SIGNAL_RAMPING_STATUS, i );
     if (i) node->rampwait = 0; 
 
+    i = ( rsp[2] & 0x04 ) ? 1 : 0;
+    process_record_bi( node, SIGNAL_REV_POLARITY_STATUS, i );
+
     i = ( rsp[2] & 0x80 ) ? 0 : 1;
     process_record_bi( node, SIGNAL_LOCAL_MODE, i );
 
@@ -957,6 +971,7 @@ static void process_etherpsc_rsp ( ETHERPSCNODE *node, unsigned char *rsp, long 
 
 	break;
 
+	case BITBUSCMD_PS_ON_REV :
 	case BITBUSCMD_PS_ON :
 	case BITBUSCMD_PS_OFF :
 
@@ -968,6 +983,7 @@ static void process_etherpsc_rsp ( ETHERPSCNODE *node, unsigned char *rsp, long 
                                 /* otherwise output thread will try again */
 
 	    process_status1( node, rsp );
+	    process_status3( node, rsp );
  
 	break;
  
@@ -980,11 +996,13 @@ static void process_etherpsc_rsp ( ETHERPSCNODE *node, unsigned char *rsp, long 
 	break;
 
         default :
+#ifdef DEBUG
                 printf("rsp:");
                 for ( i=0; i<n; i++ ) {
                     printf(" %02x", rsp[i] );
                 }
                 printf("\n");
+#endif
         break;
     }
 }
