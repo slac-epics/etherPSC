@@ -29,11 +29,11 @@
 #include	"link.h"
 #include        "iocsh.h"
 #include	"epicsExport.h"
+#include	"initHooks.h"
 
 #include	"etherPSCInclude.h"
 
 #define	DEBUG		0
-#define DEBUG_REV       0
 
 #ifndef OK
 #define	OK	0
@@ -144,15 +144,9 @@ epicsExportAddress(drvet, drvEtherPSC);
 
 /* Driver initialization routines */
 
-static long init()
+static void initThreads(initHookState state)
 {
-    /* create socket for communication, for now, there is only one */
-
-    if ( ( etherpsc.sock = socket( AF_INET, SOCK_DGRAM, 0 ) ) < 0 ) {
-	printf( "drvEtherPSC: failed to create socket: %s", strerror(errno) );
-	exit( ERROR );
-    }
-
+  if (state == initHookAfterInitDatabase) {
     if ( ! epicsThreadCreate( "EtherPSC_rcv", epicsThreadPriorityMedium,
 			epicsThreadGetStackSize(epicsThreadStackMedium),
 			(EPICSTHREADFUNC) etherPSC_input_thread,
@@ -168,7 +162,17 @@ static long init()
         printf( "drvEtherPSC: transmission thread creation failed\n" );
         exit( 1 );
     }
+  }
+}
+static long init()
+{
+    /* create socket for communication, for now, there is only one */
 
+    if ( ( etherpsc.sock = socket( AF_INET, SOCK_DGRAM, 0 ) ) < 0 ) {
+	printf( "drvEtherPSC: failed to create socket: %s", strerror(errno) );
+	exit( ERROR );
+    }
+    initHookRegister(initThreads);
     return(OK);
 }
 
@@ -451,6 +455,7 @@ static EPICSTHREADFUNC etherPSC_output_thread( ETHERPSC *etherpsc )
         for ( node = etherpsc->pnode; node;
                 node = (ETHERPSCNODE*) node->pnode )
         {
+	    if ( node->rampwait > 0 ) node->rampwait--;  /* Wait for ramp to start */
             if ( node->busy > 0 )
             {                           /* PSC needs more time, skip it */
                 node->busy--;
@@ -458,33 +463,24 @@ static EPICSTHREADFUNC etherPSC_output_thread( ETHERPSC *etherpsc )
             }
 
             if ( node->record[SIGNAL_PS_ON_OFF].set )
-            {                           /* turn PSC on or off or on in reverse polarity */
+            {                           /* turn PSC on or off */
 		node->record[SIGNAL_PS_ON_OFF].set = 2;
                 if ( node->record[SIGNAL_PS_ON_OFF].val.bo==1 )
                 {
-#if DEBUG_REV
-		    epicsPrintf("Turning On Normal\n");
-#endif
                     send_msg( node, &PS_ON_MSG );
                     node->busy = 20;     /* this will take a while */
                     if (!node->record[SIGNAL_ON_STATUS].val.bi)
                       process_record_ao( node, SIGNAL_CURRENT_AC, (float) 0.0 );
-                }
-                else if (node ->record[SIGNAL_PS_ON_OFF].val.bo==2 )
-		{
-#if DEBUG_REV
-		    epicsPrintf("Turning On Reverse\n");
-#endif
-                    send_msg( node, &PS_ON_REV_MSG );
+		}
+                else if ( node->record[SIGNAL_PS_ON_OFF].val.bo==2 )
+	        {
+                    send_msg( node, &PS_ON_REV_MSG );  /* turn on in reverse */
                     node->busy = 40;     /* this will take a while */
                     if (!node->record[SIGNAL_ON_STATUS].val.bi)
                       process_record_ao( node, SIGNAL_CURRENT_AC, (float) 0.0 );
-		}
-                else if (node ->record[SIGNAL_PS_ON_OFF].val.bo==0 )
+                }
+                else
                 {
-#if DEBUG_REV
-		    epicsPrintf("Turning Off\n");
-#endif
                     send_msg( node, &PS_OFF_MSG );
                     node->busy = 10;     /* give it some time */
                 }
@@ -507,6 +503,7 @@ static EPICSTHREADFUNC etherPSC_output_thread( ETHERPSC *etherpsc )
             }
 
             if ( node->record[SIGNAL_CURRENT_AC].set  &&
+		 node->rampwait <= 0                  &&
                  node->record[SIGNAL_RAMPING_STATUS].val.bi == 0 )
             {                           /* we have a setpoint to send */
                         /* don't send setpoint, if PS is off */
@@ -515,6 +512,7 @@ static EPICSTHREADFUNC etherPSC_output_thread( ETHERPSC *etherpsc )
 		    continue;
 		}
 		node->record[SIGNAL_CURRENT_AC].set = 2;
+		node->rampwait = 2;
 
                 new_ao = node->record[SIGNAL_CURRENT_AC].val.ao.next;
 
@@ -681,7 +679,6 @@ static void process_record_bi( ETHERPSCNODE *node, int signal, int i )
 
     PSCRecord = &node->record[signal];
     if ( ! (pbi = (biRecord*) PSCRecord->precord) ) return;
- 
 
     if ( pbi->rval != i  ||  pbi->udf  ||  PSCRecord->nsta )
     {
@@ -695,7 +692,6 @@ static void process_record_bi( ETHERPSCNODE *node, int signal, int i )
         dbScanUnlock( (struct dbCommon*) pbi );
     }
 }
-
 
 static void process_record_li( ETHERPSCNODE *node, int signal, long i )
 {
@@ -751,6 +747,7 @@ static void process_status1 ( ETHERPSCNODE *node, unsigned char *rsp )
 
     i = ( rsp[2] & 0x08 ) ? 1 : 0;
     process_record_bi( node, SIGNAL_RAMPING_STATUS, i );
+    if (i) node->rampwait = 0; 
 
     i = ( rsp[2] & 0x04 ) ? 1 : 0;
     process_record_bi( node, SIGNAL_REV_POLARITY_STATUS, i );
