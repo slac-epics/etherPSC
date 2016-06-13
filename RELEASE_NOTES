@@ -31,6 +31,10 @@
 #==============================================================
 #
 #
+etherPSC-R2-0-2_1-2:  13-Jun-2016, K. Luchini
+                       add etherPSCBipolar.db and install
+                       etherPSC.template and commonPS.template
+
 etherPSC-R2-0-2_1-1:  13-Jun-2016, K. Luchini
                        Chg ioc target from linux-x86 to linux-x86_64
                        for build in 64-bit linux
