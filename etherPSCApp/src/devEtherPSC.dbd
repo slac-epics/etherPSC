@@ -7,4 +7,4 @@ device(mbbo,BITBUS_IO,devMbboEtherPSC,"EtherPSC")
 device(stringin,BITBUS_IO,devSiEtherPSC,"EtherPSC")
 driver(drvEtherPSC)
 registrar(drvEtherPSCRegistrar)
-registrar(subPSRegister)
+
