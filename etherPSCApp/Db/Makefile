@@ -13,7 +13,10 @@ include $(TOP)/configure/CONFIG
 
 #----------------------------------------------------
 # Power Supply Control
+DB += commonPS.template
+DB += etherPSC.template
 DB += etherPSCOne.db
+DB += etherPSCBipolar.db
 #
 #----------------------------------------------------
 # Declare template files which do not show up in DB
