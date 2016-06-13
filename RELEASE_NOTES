@@ -31,6 +31,14 @@
 #==============================================================
 #
 #
+etherPSC-R2-0-2_1-0:  13-Jun-2016, K. Luchini
+                       Merge etherPSC-R2-0-1_1-1 and etherPSC-R2-0-2
+
+etherPSC-R2-0-2:     13-Jun-2016, K. Luchini
+                      import lastest version from spear with 
+                      test application included, and epics slider fix.
+                      this does not have reverse polarity changes
+
 etherPSC-R2-0-1_1-1: 18-Apr-2015     E. Williams
                       Upgraded sequencer
                       from seq-R2-1-6_1-0 to seq-R2-1-6_1-3
