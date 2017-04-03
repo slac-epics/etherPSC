@@ -30,7 +30,10 @@
 #
 #==============================================================
 #
-#
+
+R2.1.0:               03-Apr-2017, Marcio Donadio
+                      - etherPSC migrated to EPICS 3.15 and GIT
+
 etherPSC-R2-0-2_1-2:  13-Jun-2016, K. Luchini
                        add etherPSCBipolar.db and install
                        etherPSC.template and commonPS.template
