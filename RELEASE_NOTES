@@ -31,6 +31,9 @@
 #==============================================================
 #
 
+R2.1.2:               18-Mar-2025, C. Myers
+                      - update PSC delay to change processing rate to 2 Hz. 
+
 R2.1.1:               15-Aug-2020, K. Luchini
                       - update seq module to R2.2.4-1.2
 
