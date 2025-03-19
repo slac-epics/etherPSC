@@ -14,6 +14,8 @@
 #CROSS_COMPILER_TARGET_ARCHS = vxWorks-68040
 #CROSS_COMPILER_TARGET_ARCHS = RTEMS-beatnik RTEMS-uC5282 RTEMS-pc586
 
+CROSS_COMPILER_TARGET_ARCHS = linuxRT-i686 linuxRT-x86_64 RTEMS-beatnik
+
 # Set this when your IOC and the host use different paths
 # to access the application. This will be needed to boot
 # from a Microsoft FTP server or with some NFS mounts.

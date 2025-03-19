@@ -44,7 +44,7 @@
 
 /* Global variables */
 
-double EtherPSCDelay = 0.166;  /* Seconds */
+double EtherPSCDelay = 0.067;  /* Seconds */
 
 /* Local variables */
 
