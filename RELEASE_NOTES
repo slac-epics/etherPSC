@@ -32,7 +32,7 @@
 #
 
 R2.1.3:               19-Mar-2025, C. Myers
-                      - update PSC delay to change processing rate to 5 Hz. 
+                      - update PSC delay to change processing rate to 10 Hz. 
 
 R2.1.2:               18-Mar-2025, C. Myers
                       - update PSC delay to change processing rate to 2 Hz. 
