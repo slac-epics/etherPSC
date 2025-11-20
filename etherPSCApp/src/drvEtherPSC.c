@@ -34,6 +34,8 @@
 #include	"etherPSCInclude.h"
 
 #define	DEBUG		0
+#define	DIAG_DEBUG	1
+
 
 #ifndef OK
 #define	OK	0
@@ -117,7 +119,12 @@ static const ETHERPSCMSG  ANALOG_RDBK_MSG = {
                 4, 2000, BITBUSCMD_ANALOG_RDBK, 0x00,
                 { BITBUSCMD_ANALOG_RDBK, 0 } };
 
-
+static const ETHERPSCMSG  DIAG_MSG = {
+                4, 2000, BITBUSCMD_DIAG_MSG, 0x00,
+                { BITBUSCMD_DIAG_MSG, 0 };
+
+
+
 /* local function prototypes */
 static long init( );
 static long report( int level );
@@ -141,7 +148,7 @@ struct {
 	report,
 	init};
 epicsExportAddress(drvet, drvEtherPSC);
-
+
 /* Driver initialization routines */
 
 static void initThreads(initHookState state)
@@ -448,7 +455,7 @@ static EPICSTHREADFUNC etherPSC_output_thread( ETHERPSC *etherpsc )
 
                                         /* it takes three phases to get */
                                         /* all information from PSC */
-    for ( phase = 0; ; phase = (phase + 1) % 3 )
+    for ( phase = 0; ; phase = (phase + 1) % 4 )
     {
         epicsThreadSleep( EtherPSCDelay );      /* delay between cycles */
 
@@ -564,7 +571,12 @@ static EPICSTHREADFUNC etherPSC_output_thread( ETHERPSC *etherpsc )
                 case 2 :
                     send_msg( node, &ANALOG_RDBK_MSG );
                 break;
-            }
+
+		case 3 :
+                    send_msg( node, &DIAG_MSG );
+                break;
+
+	    }
         }
     }
 
@@ -1004,6 +1016,27 @@ static void process_etherpsc_rsp ( ETHERPSCNODE *node, unsigned char *rsp, long 
                 printf("\n");
 #endif
         break;
+
+
+        case BITBUSCMD_DIAG_MSG :
+            if ( n < 152 ) return;
+#if  DIAG_DEBUG
+            printf( "DIAG_DATA: %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f,
+			    %.3f\n",
+	                    b2f(&rsp[50]), b2f(&rsp[54]), b2f(&rsp[58]), b2f(&rsp[62]),
+		            b2f(&rsp[66]), b2f(&rsp[70]), b2f(&rsp[74]), b2f(&rsp[78]),
+		            b2f(&rsp[82]), b2f(&rsp[86]))
+
+	    printf( "%.8ld, %.8ld, %.8ld, %.8ld, %.8ld, %.8ld, %.8ld\n",
+                    b2l(&rsp[90]), b2l(&rsp[92]), b2l(&rsp[96]),
+		    b2l(&rsp[94]), b2l(&rsp[98]), b2l(&rsp[100]),
+		    b2l(&rsp[102]));
+#endif
+            /*This is where the channel access puts will go when I'm ready to test them*/
+        break;
+
+
+
     }
 }
 
