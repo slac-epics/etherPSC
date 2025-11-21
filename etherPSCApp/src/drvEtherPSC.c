@@ -121,7 +121,7 @@ static const ETHERPSCMSG  ANALOG_RDBK_MSG = {
 
 static const ETHERPSCMSG  DIAG_MSG = {
                 4, 2000, BITBUSCMD_DIAG_MSG, 0x00,
-                { BITBUSCMD_DIAG_MSG, 0 };
+                { BITBUSCMD_DIAG_MSG, 0 } };
 
 
 
@@ -1021,11 +1021,10 @@ static void process_etherpsc_rsp ( ETHERPSCNODE *node, unsigned char *rsp, long 
         case BITBUSCMD_DIAG_MSG :
             if ( n < 152 ) return;
 #if  DIAG_DEBUG
-            printf( "DIAG_DATA: %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f,
-			    %.3f\n",
-	                    b2f(&rsp[50]), b2f(&rsp[54]), b2f(&rsp[58]), b2f(&rsp[62]),
-		            b2f(&rsp[66]), b2f(&rsp[70]), b2f(&rsp[74]), b2f(&rsp[78]),
-		            b2f(&rsp[82]), b2f(&rsp[86]))
+            printf( "DIAG_DATA: %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f\n",
+                            b2f(&rsp[50]), b2f(&rsp[54]), b2f(&rsp[58]), b2f(&rsp[62]),
+                            b2f(&rsp[66]), b2f(&rsp[70]), b2f(&rsp[74]), b2f(&rsp[78]),
+                            b2f(&rsp[82]), b2f(&rsp[86]));
 
 	    printf( "%.8ld, %.8ld, %.8ld, %.8ld, %.8ld, %.8ld, %.8ld\n",
                     b2l(&rsp[90]), b2l(&rsp[92]), b2l(&rsp[96]),
