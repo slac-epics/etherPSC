@@ -57,8 +57,26 @@
 #define SIGNAL_CNTL_ADDRESS	61
 #define SIGNAL_DIAG_MSG         62
 #define SIGNAL_REV_POLARITY_STATUS 63
+#define SIGNAL_UNREG_15V        64
+#define SIGNAL_UNREG_NEG_15V    65
+#define SIGNAL_REG_145V         66
+#define SIGNAL_REG_NEG_145V     67
+#define SIGNAL_REF_V            68
+#define SIGNAL_5V_ADC           69
+#define SIGNAL_5V_ADD           70
+#define SIGNAL_DIG_33V          71
+#define SIGNAL_DIG_25V          72
+#define SIGNAL_DIG_12V          73
+#define SIGNAL_FAN_RPM          74
+#define SIGNAL_ADC2_OFFSET      75
+#define SIGNAL_ADC1_OFFSET      76
+#define SIGNAL_ADC2_GAIN        77
+#define SIGNAL_ADC1_GAIN        78
+#define SIGNAL_DAC_OFFSET_TEST  79
+#define SIGNAL_DAC_GAIN_TEST    80
+#define SIGNAL_SPARE_V          81
 
-#define SIGNAL_MAXNUM           63
+#define SIGNAL_MAXNUM           81
 
 #define	BITBUS_MAX_CARDS	21
 #define	BITBUS_MAX_ADDRESS	254
