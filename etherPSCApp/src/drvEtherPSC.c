@@ -357,7 +357,7 @@ static void d2b ( unsigned char *b, double *d )
 
     p = (unsigned char*) &f;
     f = *d;
-#ifdef __PPC__    
+#ifdef __PPC__
     b[0] = p[3];
     b[1] = p[2];
     b[2] = p[1];
@@ -394,7 +394,7 @@ static float b2f ( unsigned char *b )
     unsigned char       *p;
 
     p = (unsigned char*) &f;
-#ifdef __PPC__    
+#ifdef __PPC__
     p[0] = b[3];
     p[1] = b[2];
     p[2] = b[1];
@@ -530,7 +530,9 @@ static EPICSTHREADFUNC etherPSC_output_thread( ETHERPSC *etherpsc )
                 if ( dIdt  > 0.0 )
                 {
                     dt100 = dI / dIdt * 100.0 + 1.0;
-                    dt100 = dt100 * 3.154/2.0;  /* correct for cosine curve */
+                    /* Per S. Anderson (12/2025), do not correct for cosine curve.
+                       dIdt is the average ramp rate, consistent with magnetic measurements. */
+                    /* dt100 = dt100 * 3.154/2.0; */
                     if ( dt100 > 0xffff ) dt100 = 0xffff;
                 }
                 else
@@ -599,7 +601,7 @@ static EPICSTHREADFUNC etherPSC_input_thread( ETHERPSC *etherpsc )
     for ( ; ; )
     {
 	if ( ( n = recvfrom( etherpsc->sock, rsp, sizeof(rsp), 0,
-			(struct sockaddr*) &sockAddr, &sockAddrSize ) ) < 0 ) 
+			(struct sockaddr*) &sockAddr, &sockAddrSize ) ) < 0 )
 	{
 	    perror( "drvEtherPSC: recvfrom" );
 	    return ( 0 );		/* needs further checking */
@@ -614,16 +616,16 @@ static EPICSTHREADFUNC etherPSC_input_thread( ETHERPSC *etherpsc )
 	{
 					/* find node description */
 	    for ( node = etherpsc->pnode;
-		node  && 
+		node  &&
 		node->sockAddr.sin_addr.s_addr != sockAddr.sin_addr.s_addr;
 		node = (ETHERPSCNODE*) node->pnode ) { };
-	    if ( node ) 
+	    if ( node )
 	    {
 					/* count response */
 		node->record[SIGNAL_BITBUS_RSP_CNT].val.li++;
 
 		node->unanswered = 0;
-	
+
 		if ( ! node->present )
 		{			/* PSC became available */
 					/* trigger reading static info */
@@ -636,7 +638,7 @@ static EPICSTHREADFUNC etherPSC_input_thread( ETHERPSC *etherpsc )
 					/* skip command byte as we now have */
 					/* the returned command byte */
 		process_etherpsc_rsp( node, &rsp[2], n-2 );
-	
+
 	    }
 	}
     }
@@ -759,7 +761,7 @@ static void process_status1 ( ETHERPSCNODE *node, unsigned char *rsp )
 
     i = ( rsp[2] & 0x08 ) ? 1 : 0;
     process_record_bi( node, SIGNAL_RAMPING_STATUS, i );
-    if (i) node->rampwait = 0; 
+    if (i) node->rampwait = 0;
 
     i = ( rsp[2] & 0x04 ) ? 1 : 0;
     process_record_bi( node, SIGNAL_REV_POLARITY_STATUS, i );
@@ -996,13 +998,13 @@ static void process_etherpsc_rsp ( ETHERPSCNODE *node, unsigned char *rsp, long 
 
 	    process_status1( node, rsp );
 	    process_status3( node, rsp );
- 
+
 	break;
- 
+
 	case BITBUSCMD_INT_RESET :
 
             node->record[SIGNAL_INT_RESET].set = 0;    /* ack, done */
- 
+
             process_status1( node, rsp );
 
 	break;
@@ -1023,7 +1025,7 @@ static void process_etherpsc_rsp ( ETHERPSCNODE *node, unsigned char *rsp, long 
 #if  DIAG_DEBUG
         printf( "DIAG_DATA: %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f\n",
                         b2f(&rsp[34]), b2f(&rsp[50]), b2f(&rsp[54]), b2f(&rsp[58]),
-                        b2f(&rsp[62]), b2f(&rsp[66]), b2f(&rsp[70]), b2f(&rsp[74]), 
+                        b2f(&rsp[62]), b2f(&rsp[66]), b2f(&rsp[70]), b2f(&rsp[74]),
                         b2f(&rsp[78]), b2f(&rsp[82]), b2f(&rsp[86]));
 
         printf( "%.8ld, %.8ld, %.8ld, %.8ld, %.8ld, %.8ld, %.8ld\n",

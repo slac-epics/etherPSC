@@ -17,24 +17,27 @@
 #        01-Apr-2010, K. Luchini         (LUCHINI):
 #          release etherPSC-R2-0-0-lcls2
 #        24-Feb-2010, K. Luchini         (LUCHINI):
-#          release etherPSC-R2-0-1-lcls2 
-#          release etherPSC-R2-0-1-lcls1 
+#          release etherPSC-R2-0-1-lcls2
+#          release etherPSC-R2-0-1-lcls1
 #        29-Apr-2009, K. Luchini         (LUCHINI):
-#          release etherPSC-R2-0-0-lcls1 
+#          release etherPSC-R2-0-0-lcls1
 #        06-May-2008, K. Luchini         (LUCHINI):
-#          release etherPSC-R2-0-2  
+#          release etherPSC-R2-0-2
 #        08-Oct-2007, K. Luchini         (LUCHINI):
-#          release etherPSC-R2-0-1  
+#          release etherPSC-R2-0-1
 #        30-Aug-2007, K. Luchini         (LUCHINI):
-#          release etherPSC-R2-0-0  
+#          release etherPSC-R2-0-0
 #
 #==============================================================
 #
 
 
+R2.2.1:               10-Sep-2026, A. Le
+                        Remove obsolete cosine correction from magnet ramp time
+
 R2.2.0:               14-Jan-2026, C. Myers
                         Added new command to retrieve diagnostic data per request from power
-                        supply team. 
+                        supply team.
 
 R2.1.1:               15-Aug-2020, K. Luchini
                       - update seq module to R2.2.4-1.2
@@ -54,7 +57,7 @@ etherPSC-R2-0-2_1-0:  13-Jun-2016, K. Luchini
                        Merge etherPSC-R2-0-1_1-1 and etherPSC-R2-0-2
 
 etherPSC-R2-0-2:     13-Jun-2016, K. Luchini
-                      import lastest version from spear with 
+                      import lastest version from spear with
                       test application included, and epics slider fix.
                       this does not have reverse polarity changes
 
@@ -62,7 +65,7 @@ etherPSC-R2-0-1_1-1: 18-Apr-2015     E. Williams
                       Upgraded sequencer
                       from seq-R2-1-6_1-0 to seq-R2-1-6_1-3
 etherPSC-R2-0-1_1-0: 05-Jul-2012     K. Luchini
-                       Upgraded sequencer 
+                       Upgraded sequencer
                        from seq-R2-1-3-lcls1 to seq-R2-1-6_1-0
 
 etherPSC-R2-0-1-lcls6: Upgrade to newer Sequencer: seq-R2-1-3-lcls1
@@ -77,11 +80,11 @@ etherPSC-R2-0-0-lcls2: Build against base-R3-14-8-2-lcls5 (RTEMS 4.9.1)
 
 etherPSC-R2-0-1-lcls2: Build against base-R3-14-8-2-lcls5 (RTEMS 4.9.3)
 
-etherPSC-R2-0-1-lcls1: Pick-up linux-x86 endian fix from Spear3 by 
-                       Stephanie Allison 
+etherPSC-R2-0-1-lcls1: Pick-up linux-x86 endian fix from Spear3 by
+                       Stephanie Allison
 
 etherPSC-R2-0-0-lcls1: Build against base-R3-14-8-2-lcls3 (RTEMS 4.9.1)
-                       use lcls convension for tagging pkgs maintained outside 
+                       use lcls convension for tagging pkgs maintained outside
 
 etherPSC-R2-0-2: Build against base-R3-14-8-2-lcls2 (RTEMS 4.7.1)
 
@@ -90,7 +93,7 @@ etherPSC-R2-0-1: modifications needed to bring the module to EPICS R3-14-9 stand
 
 etherPSC-R2-0-0: Initial Import
 
-   
 
- 
+
+
 
